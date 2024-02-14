@@ -1,20 +1,27 @@
 import streamlit as st
-from langchain.llms import  OpenAI
+from langchain.llms import OpenAI
 
+# Set the title of the app
+st.title('LLM Response Generator')
 
-st.title('My LLM App')
+# Sidebar input for API key
+api_key = st.sidebar.text_input('Enter OpenAI API Key:', type='password')
 
-openai_api_key = st.sidebar.text_input('OpenAI API Key', type = 'password')
+# Function to generate responses using the language model
+def fetch_response(query_text):
+    language_model = OpenAI(temperature=0.7, api_key=api_key)
+    response = language_model.generate(query_text)
+    return response
 
-def generate_response(input_text):
-    llm = OpenAI(temperature = 0.7, openai_api_key = openai_api_key)
-    st.info(llm(input_text))
+# Main form for text input and submission
+with st.form('input_form'):
+    user_input = st.text_area('Enter your question:', 'What are the three key pieces of advice for learning how to code?')
+    submit_button = st.form_submit_button('Generate Response')
 
-
-    with st.form('my_form'):
-        text = st.text_area('Enter text:', 'What are the three key pieces of advice for learning how to code?')
-        submitted = st.form_submit_button('Submit')
-        if not openai_api_key.startswith('sk-'):
-            st.warning('Please enter your OpenAI API key', icon='⚠️')
-        if submitted and openai_api_key.startswith('sk-'):
-            generate_response(text)
+    # API key validation and response generation
+    if submit_button:
+        if not api_key.startswith('sk-'):
+            st.warning('Invalid API key. Please enter a valid OpenAI API key.', icon='⚠️')
+        else:
+            generated_text = fetch_response(user_input)
+            st.info(generated_text)
