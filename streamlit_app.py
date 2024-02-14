@@ -11,11 +11,13 @@ api_key = st.sidebar.text_input('Enter OpenAI API Key:', type='password')
 def fetch_response(query_text):
     try:
         language_model = OpenAI(temperature=0.7, api_key=api_key)
-        response = language_model.generate(query_text)
+        # Ensure the prompt is passed as a list of strings
+        response = language_model.generate([query_text])  # Note the square brackets
         return response
     except Exception as e:
         # Return the error message
         return f"An error occurred: {str(e)}"
+
 
 # Main form for text input and submission
 with st.form('input_form'):
